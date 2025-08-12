@@ -1,62 +1,29 @@
-// src/App.js
-import React, { useMemo, useState } from "react";
-import Card from "./components/Card";
-import SearchBar from "./components/SearchBar";
-import { PEOPLE } from "./people";      // נתיב לפי המיקום החדש שלך
-import "./index.css";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 
-export default function App() {
-  const [query, setQuery] = useState("");
+import SignUp from "./pages/SignUp";
+import Login from "./pages/Login";               // ודאי שקיים
+import MentorsCards from "./pages/MentorsCards"; // ודאי שקיים
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return PEOPLE;
-    return PEOPLE.filter(p => p.name.toLowerCase().includes(q));
-  }, [query]);
+const theme = createTheme({ /* ... */ });
 
-  const handleMore = (person) => () => {
-    alert(`More details about ${person.name}`);
-  };
 
-  // כשהמשתמשת לוחצת Enter ב-SearchBar:
-  const handleSearchSubmit = () => {
-    if (filtered.length > 0) {
-      handleMore(filtered[0])(); // פותח את הראשונה כתצוגת ברירת מחדל
-    }
-  };
-
+function App() {
   return (
-    <main className="page">
-      <SearchBar
-        value={query}
-        onChange={setQuery}
-        onSubmit={handleSearchSubmit}
-        placeholder="Search by name…"
-      />
-
-      {filtered.length === 0 ? (
-        <div style={{ textAlign: "center", opacity: 0.7 }}>
-          <p>No matches found for “{query}”.</p>
-          <button
-            onClick={() => setQuery("")}
-            style={{ border: "1px solid #ddd", borderRadius: 10, padding: "6px 12px", cursor: "pointer" }}
-          >
-            Clear search
-          </button>
-        </div>
-      ) : (
-        <section className="cards-grid">
-          {filtered.map((p) => (
-            <Card
-              key={p.id}
-              imageSrc={p.imageSrc}
-              name={p.name}
-              title={p.title}
-              onMore={handleMore(p)}
-            />
-          ))}
-        </section>
-      )}
-    </main>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/mentors" element={<MentorsCards />} />
+          
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
+
+export default App;
