@@ -1,0 +1,43 @@
+.login-root {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: #f8fafc;
+    padding: 20px;
+  }
+  
+  .login-card {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* כותרות כמו ב-Entry */
+  .login-card .MuiTypography-h4 {
+    margin: 0 0 8px;
+    font-weight: 700;
+  }
+  .login-card .subtitle {
+    margin: 0 0 16px;
+    color: #6b7280;
+  }
+  
+  /* ריווח טופס */
+  .MuiFormControl-root { margin-top: 8px; margin-bottom: 8px; }
+  .form-actions { margin-top: 8px; }
+  
+  /* כפתור Submit – צבעים כמו Entry */
+  .login-card .MuiButton-contained {
+    background: #111827;
+    border: 1px solid #111827;
+    font-weight: 600;
+  }
+  .login-card .MuiButton-contained:hover {
+    filter: brightness(0.95);
+    background: #111827;
+    border-color: #111827;
+  }
+  

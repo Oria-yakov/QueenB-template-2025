@@ -2,15 +2,15 @@ import React from "react";
 import { TextField as MUITextField } from "@mui/material";
 import FieldLabel from "./FieldLabel";
 
-export default function TextField({
-  id = "name",
-  label = "Full name",
+export default function TextArea({
+  id = "additionalInfo",
+  label = "Additional info",
   placeholder = "",
+  rows = 4,
   value,
   onChange,
   error,
   onBlur,
-  autoComplete = "name",
 }) {
   return (
     <div>
@@ -24,9 +24,10 @@ export default function TextField({
         onBlur={onBlur}
         error={Boolean(error)}
         helperText={error || null}
-        autoComplete={autoComplete}
         fullWidth
         margin="dense"
+        multiline
+        minRows={rows}
         inputProps={{ "aria-label": label }}
       />
     </div>
