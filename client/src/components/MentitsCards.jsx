@@ -1,8 +1,8 @@
 
 import React, { useMemo, useState } from "react";
-import Card from "../components/Card";
-import SearchBar from "../components/SearchBar";
-import { PEOPLE } from "../mentors";   
+import Card from "./Card";
+import SearchBar from "./SearchBar";
+import { MENTITS } from "../mentits";   
 import "../index.css";
 
 export default function MentorsCards() {
@@ -10,8 +10,8 @@ export default function MentorsCards() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return PEOPLE;
-    return PEOPLE.filter(p =>
+    if (!q) return MENTITS;
+    return MENTITS.filter(p =>
       p.name.toLowerCase().includes(q) ||
       (p.title || "").toLowerCase().includes(q)
     );
@@ -22,7 +22,7 @@ export default function MentorsCards() {
   };
 
   const handleSearchSubmit = () => {
-    // Enter ב-SearchBar
+    
     if (filtered.length > 0) {
       handleMore(filtered[0])();
     }
@@ -35,11 +35,12 @@ export default function MentorsCards() {
         onChange={setQuery}
         onSubmit={handleSearchSubmit}
         placeholder="Search by name or technology"
+
       />
 
       {filtered.length === 0 ? (
         <div style={{ textAlign: "center", opacity: 0.75 }}>
-          <p>No results found for “{query}”.</p>
+          <p> No results found for “{query}”.</p>
           <button
             onClick={() => setQuery("")}
             style={{ border: "1px solid #ddd", borderRadius: 10, padding: "6px 12px", cursor: "pointer" }}
