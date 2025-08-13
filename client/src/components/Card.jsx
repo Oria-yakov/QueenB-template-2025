@@ -1,3 +1,4 @@
+
 import React from "react";
 import PropTypes from "prop-types";
 import MoreButton from "./MoreButton";
@@ -23,12 +24,12 @@ export default function Card({ imageSrc, name, title, onMore }) {
 }
 
 Card.propTypes = {
-  /** כתובת התמונה (אוואטר / איור) */
+  /** התמונה של המנטורית */
   imageSrc: PropTypes.string.isRequired,
   /** שם באנגלית שמופיע מתחת לתמונה */
   name: PropTypes.string.isRequired,
   /** טייטל / תפקיד (למשל: HTML, JavaScript, Creator) */
   title: PropTypes.string.isRequired,
-  /** פעולה בלחיצה על הכפתור (פתיחת מודאל/ניווט) */
+  /** פעולה בלחיצה על הכפתור */
   onMore: PropTypes.func,
 };
