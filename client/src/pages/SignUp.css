@@ -1,0 +1,84 @@
+/* Gate state (לפני בחירת תפקיד) */
+.role-gate {
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+.role-gate-title { margin-bottom: 8px; }
+.role-gate-hint  { margin-top: 8px; color: #6b7280; font-size: 14px; }
+
+/* מתג בחירת תפקיד */
+.role-switch {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+
+/* כפתורי התפקיד – צבעים כמו Entry */
+.role-switch .MuiButton-contained {
+  background: #111827;
+  border: 1px solid #111827;
+  font-weight: 600;
+}
+.role-switch .MuiButton-contained:hover {
+  filter: brightness(0.95);
+  background: #111827;
+  border-color: #111827;
+}
+.role-switch .MuiButton-outlined {
+  color: #111827;
+  border-color: #111827;
+  font-weight: 600;
+}
+.role-switch .MuiButton-outlined:hover {
+  background: rgba(17, 24, 39, 0.04); /* #111827 עם שקיפות */
+  border-color: #111827;
+  color: #111827;
+}
+
+/* כותרת קטע המנטור */
+.section-title { margin-top: 8px; margin-bottom: 4px; }
+
+/* לייאאוט כללי */
+.signup-root {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;  /* עיגון לראש המסך כדי שלא יקפוץ */
+  background: #f8fafc;
+  padding: 48px 20px;
+}
+
+.signup-card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ריווח שדות */
+.MuiFormControl-root { margin-top: 8px; margin-bottom: 8px; }
+.MuiFormHelperText-root { margin-left: 0; }
+.form-actions { margin-top: 8px; }
+
+/* כפתור Create account – כמו Entry */
+.signup-card .MuiButton-contained {
+  background: #111827;
+  border: 1px solid #111827;
+  font-weight: 600;
+}
+.signup-card .MuiButton-contained:hover {
+  filter: brightness(0.95);
+  background: #111827;
+  border-color: #111827;
+}
+
+/* Slider – עבה ונקי, עם צבע primary כהה */
+.signup-card .MuiSlider-root .MuiSlider-rail,
+.signup-card .MuiSlider-root .MuiSlider-track { height: 4px; }
+.signup-card .MuiSlider-root .MuiSlider-thumb { width: 16px; height: 16px; }
+.signup-card .MuiSlider-root .MuiSlider-track { background-color: #111827; }
+.signup-card .MuiSlider-root .MuiSlider-rail  { background-color: #c7cdd6; }
+.signup-card .MuiSlider-root .MuiSlider-thumb { border: 2px solid #111827; }

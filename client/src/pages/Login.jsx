@@ -1,22 +1,55 @@
 import React from "react";
+import { Container, Paper, Typography, TextField, Button } from "@mui/material";
+import "./Login.css";
 
 export default function Login() {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    // TODO: call API
+    console.log("Login payload:", { email, password });
+    alert(`Logging in as: ${email}`);
+  };
+
   return (
-    <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", direction: "rtl" }}>
-      <div style={{ width: 320, textAlign: "center" }}>
-        <h1>ברוכים הבאים</h1>
-        <p>בחר את סוג המשתמש:</p>
+    <div className="login-root">
+      <Container maxWidth="sm">
+        <Paper elevation={2} className="login-card">
+          <Typography variant="h4" gutterBottom>
+            Log in
+          </Typography>
 
-        <div style={{ display: "grid", gap: 12, marginTop: 16 }}>
-          <button style={{ padding: "12px 16px", fontSize: 16 }}>
-            אני מנטית
-          </button>
+          <form onSubmit={onSubmit} noValidate>
+            <TextField
+              label="Email"
+              type="email"
+              fullWidth
+              margin="normal"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
-          <button style={{ padding: "12px 16px", fontSize: 16 }}>
-            אני מנטורית
-          </button>
-        </div>
-      </div>
+            <TextField
+              label="Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <div className="form-actions">
+              <Button type="submit" variant="contained" fullWidth>
+                Log in
+              </Button>
+            </div>
+          </form>
+        </Paper>
+      </Container>
     </div>
   );
 }

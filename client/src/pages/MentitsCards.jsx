@@ -1,7 +1,7 @@
 
 import React, { useMemo, useState } from "react";
-import Card from "./Card";
-import SearchBar from "./SearchBar";
+import Card from "../components/Card";
+import SearchBar from "../components/SearchBar";
 import { MENTITS } from "../mentits";   
 import "../index.css";
 

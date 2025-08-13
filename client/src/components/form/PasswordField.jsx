@@ -1,23 +1,26 @@
 import React from "react";
-import { TextField as MUITextField } from "@mui/material";
+import { TextField as MUITextField, InputAdornment, Button } from "@mui/material";
 import FieldLabel from "./FieldLabel";
 
-export default function TextField({
-  id = "name",
-  label = "Full name",
+export default function PasswordField({
+  id = "password",
+  label = "Password",
   placeholder = "",
   value,
   onChange,
   error,
   onBlur,
-  autoComplete = "name",
+  autoComplete = "new-password",
 }) {
+  const [show, setShow] = React.useState(false);
+
   return (
     <div>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <MUITextField
         id={id}
         name={id}
+        type={show ? "text" : "password"}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -28,6 +31,15 @@ export default function TextField({
         fullWidth
         margin="dense"
         inputProps={{ "aria-label": label }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <Button size="small" onClick={() => setShow((s) => !s)}>
+                {show ? "Hide" : "Show"}
+              </Button>
+            </InputAdornment>
+          ),
+        }}
       />
     </div>
   );
