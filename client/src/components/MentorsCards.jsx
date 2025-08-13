@@ -1,8 +1,8 @@
-// src/pages/MentorsCards.jsx
+
 import React, { useMemo, useState } from "react";
 import Card from "../components/Card";
 import SearchBar from "../components/SearchBar";
-import { PEOPLE } from "../people";   // עדכני נתיב לפי המיקום אצלך
+import { PEOPLE } from "../mentors";   
 import "../index.css";
 
 export default function MentorsCards() {
@@ -34,17 +34,17 @@ export default function MentorsCards() {
         value={query}
         onChange={setQuery}
         onSubmit={handleSearchSubmit}
-        placeholder="חפשי לפי שם או טכנולוגיה…"
+        placeholder="Search by name or technology"
       />
 
       {filtered.length === 0 ? (
         <div style={{ textAlign: "center", opacity: 0.75 }}>
-          <p>לא נמצאו תוצאות עבור “{query}”.</p>
+          <p>No results found for “{query}”.</p>
           <button
             onClick={() => setQuery("")}
             style={{ border: "1px solid #ddd", borderRadius: 10, padding: "6px 12px", cursor: "pointer" }}
           >
-            נקה חיפוש
+            Clear search
           </button>
         </div>
       ) : (
