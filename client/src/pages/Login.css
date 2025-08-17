@@ -1,43 +1,115 @@
+/* ====== ROOT (רקע גרדיאנט עדין) ====== */
 .login-root {
-    min-height: 100vh;
-    display: grid;
-    place-items: center;
-    background: #f8fafc;
-    padding: 20px;
-  }
-  
-  .login-card {
-    width: 100%;
-    max-width: 420px;
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  }
-  
-  /* כותרות כמו ב-Entry */
-  .login-card .MuiTypography-h4 {
-    margin: 0 0 8px;
-    font-weight: 700;
-  }
-  .login-card .subtitle {
-    margin: 0 0 16px;
-    color: #6b7280;
-  }
-  
-  /* ריווח טופס */
-  .MuiFormControl-root { margin-top: 8px; margin-bottom: 8px; }
-  .form-actions { margin-top: 8px; }
-  
-  /* כפתור Submit – צבעים כמו Entry */
-  .login-card .MuiButton-contained {
-    background: #111827;
-    border: 1px solid #111827;
-    font-weight: 600;
-  }
-  .login-card .MuiButton-contained:hover {
-    filter: brightness(0.95);
-    background: #111827;
-    border-color: #111827;
-  }
-  
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: linear-gradient(180deg, #fff1f2 0%, #fdeaf1 40%, #f8fafc 100%);
+}
+
+/* ====== CARD ====== */
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 14px 36px rgba(17, 24, 39, 0.12);
+  padding: 0;
+}
+
+/* ====== TOP (לבן עם לוגו) ====== */
+.login-top {
+  background: #fafafa;
+  padding: 28px 24px 12px;
+  text-align: center;
+}
+
+.login-logo {
+  width: 160px;
+  height: auto;
+  display: block;
+  margin: 0 auto 6px;
+}
+
+/* ====== BOTTOM (ורוד עם הטופס) ====== */
+.login-bottom {
+  background: #f9d8ea;
+  color: #111827;
+  padding: 24px;
+  border-top-left-radius: 32px;
+  border-top-right-radius: 32px;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.6) inset;
+  text-align: left;
+}
+
+/* ====== טקסטים ====== */
+.login-bottom .MuiTypography-h4 {
+  margin: 0 0 8px;
+  font-weight: 800;
+  font-size: 28px;
+  color: #111827;
+}
+
+.login-bottom .subtitle {
+  margin: 0 0 16px;
+  color: rgba(17, 24, 39, 0.75);
+  line-height: 1.45;
+  font-size: 14.5px;
+}
+
+/* ====== INPUTS ====== */
+.MuiFormControl-root {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.login-bottom .MuiOutlinedInput-root {
+  background: #ffffff;
+  border-radius: 12px;
+  transition: box-shadow .15s ease, transform .08s ease;
+}
+
+.login-bottom .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(17, 24, 39, 0.08);
+}
+
+.login-bottom .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(17, 24, 39, 0.18);
+}
+.login-bottom .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #111827;
+  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+}
+
+/* ====== ACTIONS (כפתור) ====== */
+.form-actions {
+  margin-top: 18px;
+}
+
+.login-bottom .MuiButton-contained {
+  height: 48px;
+  border-radius: 999px;                  /* pill shape */
+  background: #111827;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15.5px;
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.25);
+  transition: transform .12s ease, box-shadow .12s ease, opacity .15s ease;
+}
+
+.login-bottom .MuiButton-contained:hover {
+  transform: translateY(-1px);
+}
+
+.login-bottom .MuiButton-contained:active {
+  transform: translateY(0);
+  opacity: .95;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 420px) {
+  .login-top { padding: 24px 18px 8px; }
+  .login-bottom { padding: 20px 18px; }
+  .login-bottom .MuiTypography-h4 { font-size: 24px; }
+}

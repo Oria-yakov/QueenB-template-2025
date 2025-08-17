@@ -1,9 +1,9 @@
 
 import React, { useMemo, useState } from "react";
-import Card from "../components/Card";
-import SearchBar from "../components/SearchBar";
+import Card from "../components/form2/Card.jsx";
+import SearchBar from "../components/form2/SearchBar.jsx";
 import { MENTITS } from "../mentits";   
-import "../index.css";
+import "./information.css";
 
 export default function MentorsCards() {
   const [query, setQuery] = useState("");

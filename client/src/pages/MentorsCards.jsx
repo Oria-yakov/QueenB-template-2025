@@ -1,31 +1,33 @@
-
 import React, { useMemo, useState } from "react";
-import Card from "../components/Card";
-import SearchBar from "../components/SearchBar";
-import { PEOPLE } from "../mentors";   
-import "../index.css";
+import Card from "../components/form2/Card.jsx";
+import SearchBar from "../components/form2/SearchBar.jsx";
+import { PEOPLE } from "../mentors";
+import "./information.css";
+import { useNavigate } from "react-router-dom";
 
 export default function MentorsCards() {
   const [query, setQuery] = useState("");
+  const navigate = useNavigate(); // ← להזיז לפה (לתוך הקומפוננטה)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return PEOPLE;
-    return PEOPLE.filter(p =>
-      p.name.toLowerCase().includes(q) ||
-      (p.title || "").toLowerCase().includes(q)
-    );
+
+    return PEOPLE.filter((p) => {
+      const langs = Array.isArray(p.languages) ? p.languages.join(" ") : (p.languages || "");
+      return (
+        p.name.toLowerCase().includes(q) ||
+        langs.toLowerCase().includes(q)
+      );
+    });
   }, [query]);
 
   const handleMore = (person) => () => {
-    alert(`More details about ${person.name}`);
+    navigate(`/mentors/${person.id}`);
   };
 
   const handleSearchSubmit = () => {
-    // Enter ב-SearchBar
-    if (filtered.length > 0) {
-      handleMore(filtered[0])();
-    }
+    if (filtered.length > 0) handleMore(filtered[0])();
   };
 
   return (
@@ -54,7 +56,7 @@ export default function MentorsCards() {
               key={p.id}
               imageSrc={p.imageSrc}
               name={p.name}
-              title={p.title}
+              title={Array.isArray(p.languages) ? p.languages.join(", ") : p.languages}
               onMore={handleMore(p)}
             />
           ))}
