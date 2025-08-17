@@ -1,0 +1,22 @@
+/* reset קטן ונוח */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* עטיפה כללית של העמוד */
+.page {
+  min-height: 100vh;
+  padding: 24px;
+    background: linear-gradient(180deg, #fff1f2 0%, #fdeaf1 40%, #f8fafc 100%);
+}
+
+/* הגריד שמסדר את כל הכרטיסים */
+.cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;  /* מרכז אופקי */
+  gap: 24px;
+}

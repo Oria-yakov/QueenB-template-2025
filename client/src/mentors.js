@@ -1,12 +1,21 @@
 
 export const PEOPLE = [
-  {
+   {
     id: 1,
-    name: "Aviv Cohen",
-    title: "HTML",
+    name: "Oria Yakov",
+    languages: ["Java", "C", "Python"],   // שפות תכנות
+    additionalInfo: "בוגרת תואר במדעי המחשב", // מידע נוסף
+    yearsExperience: 0,                   // שנות ניסיון
     imageSrc:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=256&h=256&fit=crop",
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=256&h=256&fit=crop", // תמונה זמנית/אישית
+
+    // פרטי יצירת קשר
+    phone: "0509023619",
+    email: "oria974@gmail.com",
+    linkedin: "https://www.linkedin.com/in/oria-yakov/",
+    whatsapp: "https://wa.me/972509023619" // קישור ישיר לוואטסאפ
   },
+
   {
     id: 2,
     name: "Noga Kirill",

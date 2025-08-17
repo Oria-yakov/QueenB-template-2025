@@ -5,6 +5,10 @@ import Entry from "./pages/Entry";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";             
 import MentorsCards from "./pages/MentorsCards"; 
+import MentitsCards from "./pages/MentitsCards"; 
+import MentorDetails from "./pages/MentorDetails";
+
+
 
 const theme = createTheme({ /* ... */ });
 
@@ -19,7 +23,11 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/mentors" element={<MentorsCards />} />
+          <Route path="/mentits" element={<MentitsCards />} />
           <Route path="/Entry" element={<Entry />} />
+          <Route path="/mentors/:id" element={<MentorDetails />} />
+
+          
         </Routes>
       </Router>
     </ThemeProvider>
@@ -27,3 +35,4 @@ function App() {
 }
 
 export default App;
+
