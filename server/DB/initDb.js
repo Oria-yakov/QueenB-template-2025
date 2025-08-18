@@ -1,4 +1,4 @@
-// הפעלה: node server/DB/initDb.js
+// node server/DB/initDb.js
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -12,16 +12,17 @@ async function run() {
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: '',   // <<< הסיסמה שלך
+    password: 'Aa123456', // שלך
     multipleStatements: true
   };
 
   const schemaPath = path.join(__dirname, 'schema.sql');
-  if (!fs.existsSync(schemaPath)) {
-    console.error('❌ schema.sql not found at', schemaPath);
-    process.exit(1);
+  let schemaSql = fs.readFileSync(schemaPath, 'utf8');
+
+  // הסרת BOM אם קיים בתחילת הקובץ
+  if (schemaSql.charCodeAt(0) === 0xFEFF) {
+    schemaSql = schemaSql.slice(1);
   }
-  const schemaSql = fs.readFileSync(schemaPath, 'utf8');
 
   const conn = await mysql.createConnection(connectionConfig);
   try {
@@ -35,5 +36,4 @@ async function run() {
     await conn.end();
   }
 }
-
 run();
