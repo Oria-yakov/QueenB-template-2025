@@ -1,30 +1,30 @@
-
 import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";              // ← הוספה
 import Card from "../components/form2/Card.jsx";
 import SearchBar from "../components/form2/SearchBar.jsx";
-import { MENTITS } from "../mentits";   
+import { MENTITS } from "../mentits";
 import "./information.css";
 
 export default function MentorsCards() {
   const [query, setQuery] = useState("");
+  const navigate = useNavigate();                            // ← הוספה
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return MENTITS;
-    return MENTITS.filter(p =>
+    return MENTITS.filter((p) =>
       p.name.toLowerCase().includes(q) ||
       (p.title || "").toLowerCase().includes(q)
     );
   }, [query]);
 
   const handleMore = (person) => () => {
-    alert(`More details about ${person.name}`);
+    navigate(`/mentits/${person.id}`);                       // ← ניווט במקום alert
   };
 
   const handleSearchSubmit = () => {
-    
     if (filtered.length > 0) {
-      handleMore(filtered[0])();
+      navigate(`/mentits/${filtered[0].id}`);                // ← גם פה ניווט ישיר
     }
   };
 
@@ -35,12 +35,11 @@ export default function MentorsCards() {
         onChange={setQuery}
         onSubmit={handleSearchSubmit}
         placeholder="Search by name or technology"
-
       />
 
       {filtered.length === 0 ? (
         <div style={{ textAlign: "center", opacity: 0.75 }}>
-          <p> No results found for “{query}”.</p>
+          <p>No results found for “{query}”.</p>
           <button
             onClick={() => setQuery("")}
             style={{ border: "1px solid #ddd", borderRadius: 10, padding: "6px 12px", cursor: "pointer" }}
@@ -49,14 +48,14 @@ export default function MentorsCards() {
           </button>
         </div>
       ) : (
-        <section className="cards-grid" role="list" aria-label="רשימת מנטוריות">
+        <section className="cards-grid" role="list" aria-label="רשימת מנטיות">
           {filtered.map((p) => (
             <Card
               key={p.id}
               imageSrc={p.imageSrc}
               name={p.name}
               title={p.title}
-              onMore={handleMore(p)}
+              onMore={handleMore(p)}                           // ← יפעיל navigate
             />
           ))}
         </section>
