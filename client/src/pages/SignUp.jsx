@@ -2,28 +2,25 @@ import React from "react";
 import { Container, Paper, Typography, Button, Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
 
-import TextField from "../components/form/TextField";              // text input wrapper (כבר אצלך)
-import EmailField from "../components/form/EmailField";            // אם עדיין אין — תגידי ואשלח
-import PasswordField from "../components/form/PasswordField";      // אם עדיין אין — תגידי ואשלח
-import TextArea from "../components/form/TextArea";                // אם עדיין אין — תגידי ואשלח
-import YearsExperienceField from "../components/form/YearsExperienceField";   // שדה סלאיידר לשנות ניסיון
-import LanguagesMultiSelect from "../components/form/LanguagesMultiSelect";   // מולטי-סלקט לשפות תכנות
+import TextField from "../components/form/TextField";
+import EmailField from "../components/form/EmailField";
+import PasswordField from "../components/form/PasswordField";
+import TextArea from "../components/form/TextArea";
+import YearsExperienceField from "../components/form/YearsExperienceField";
+import LanguagesMultiSelect from "../components/form/LanguagesMultiSelect";
 
+import logo from "./queenb-logo.png";
 import "./SignUp.css";
 
 export default function SignUp() {
   const location = useLocation();
 
-  // role: null until we choose "mentor" or "mentee"
   const [role, setRole] = React.useState(null);
-
-  // basic fields
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [info, setInfo] = React.useState("");
 
-  // mentor-only
   const [years, setYears] = React.useState(0);
   const [languages, setLanguages] = React.useState([]);
 
@@ -31,39 +28,18 @@ export default function SignUp() {
     name: "", email: "", password: "", info: "", years: "", languages: "",
   });
 
- 
   React.useEffect(() => {
     const params = new URLSearchParams(location.search);
     const r = params.get("role");
     if (r === "mentor" || r === "mentee") setRole(r);
   }, [location.search]);
 
-  // ---- validation ----
-  const validateName = (v) => {
-    if (!v.trim()) return "Required field";
-    if (v.trim().length < 2) return "Name must be at least 2 characters";
-    return "";
-  };
-  const validateEmail = (v) => {
-    if (!v.trim()) return "Required field";
-    const re = /[^\s@]+@[^\s@]+\.[^\s@]+/;
-    if (!re.test(v)) return "Invalid email";
-    return "";
-  };
-  const validatePassword = (v) => {
-    if (!v) return "Required field";
-    if (v.length < 8) return "Password must be at least 8 characters";
-    if (!/[0-9]/.test(v)) return "Password must include at least one digit";
-    return "";
-  };
+  const validateName = (v) => !v.trim() ? "Required field" : v.trim().length < 2 ? "Name must be at least 2 characters" : "";
+  const validateEmail = (v) => !v.trim() ? "Required field" : !/[^\s@]+@[^\s@]+\.[^\s@]+/.test(v) ? "Invalid email" : "";
+  const validatePassword = (v) => !v ? "Required field" : v.length < 8 ? "Password must be at least 8 characters" : !/[0-9]/.test(v) ? "Password must include at least one digit" : "";
   const validateInfo = (v) => (v && v.length > 500 ? "Please keep it under 500 characters" : "");
-
-  const validateYears = (v) =>
-    role === "mentor"
-      ? v <= 0 ? "Please enter at least 1 year" : v > 60 ? "Please enter a realistic value (≤ 60)" : ""
-      : "";
-  const validateLanguages = (arr) =>
-    role === "mentor" ? (arr.length === 0 ? "Select at least one language" : "") : "";
+  const validateYears = (v) => role === "mentor" ? (v <= 0 ? "Please enter at least 1 year" : v > 60 ? "Please enter a realistic value (≤ 60)" : "") : "";
+  const validateLanguages = (arr) => role === "mentor" ? (arr.length === 0 ? "Select at least one language" : "") : "";
 
   const validateAll = () => {
     const next = {
@@ -109,85 +85,94 @@ export default function SignUp() {
     <div className="signup-root">
       <Container maxWidth="sm">
         <Paper elevation={2} className="signup-card">
-          <Typography variant="h4" gutterBottom>
-            Create account
-          </Typography>
 
-          {/* choose mentor or mentee */}
-          {role === null && (
-            <Box className="role-gate">
-              <Typography className="role-gate-title" variant="h6">
-                Choose your role to continue
-              </Typography>
-              <div className="role-switch">
-                <Button variant="contained" onClick={() => setRole("mentor")}>Mentor</Button>
-                <Button variant="outlined" onClick={() => setRole("mentee")}>Mentee</Button>
-              </div>
-              <Typography className="role-gate-hint">
-                You can switch roles later.
-              </Typography>
-            </Box>
-          )}
+          {/* ====== TOP עם לוגו ====== */}
+          <div className="signup-top">
+            <img src={logo} alt="QueenB Logo" className="signup-logo" />
+          </div>
 
-          {role !== null && (
-            <>
-              <Box className="role-switch">
-                <Button
-                  variant={role === "mentor" ? "contained" : "outlined"}
-                  onClick={() => setRole("mentor")}
-                >
-                  Mentor
-                </Button>
-                <Button
-                  variant={role === "mentee" ? "contained" : "outlined"}
-                  onClick={() => setRole("mentee")}
-                >
-                  Mentee
-                </Button>
+          {/* ====== BOTTOM עם כל התוכן ====== */}
+          <div className="signup-bottom">
+            <Typography variant="h4" gutterBottom>
+              Create account
+            </Typography>
+
+            {/* choose mentor or mentee */}
+            {role === null && (
+              <Box className="role-gate">
+                <Typography className="role-gate-title" variant="h6">
+                  Choose your role to continue
+                </Typography>
+                <div className="role-switch">
+                  <Button variant="contained" onClick={() => setRole("mentor")}>Mentor</Button>
+                  <Button variant="outlined" onClick={() => setRole("mentee")}>Mentee</Button>
+                </div>
+                <Typography className="role-gate-hint">
+                  You can switch roles later.
+                </Typography>
               </Box>
+            )}
 
-              <form onSubmit={onSubmit} noValidate>
-                <TextField
-                  id="name"
-                  label="Full name"
-                  value={name}
-                  onChange={setName}
-                  error={errors.name}
-                  onBlur={onBlur("name")}
-                />
+            {role !== null && (
+              <>
+                <Box className="role-switch">
+                  <Button
+                    variant={role === "mentor" ? "contained" : "outlined"}
+                    onClick={() => setRole("mentor")}
+                  >
+                    Mentor
+                  </Button>
+                  <Button
+                    variant={role === "mentee" ? "contained" : "outlined"}
+                    onClick={() => setRole("mentee")}
+                  >
+                    Mentee
+                  </Button>
+                </Box>
 
-                <EmailField
-                  id="email"
-                  label="Email"
-                  value={email}
-                  onChange={setEmail}
-                  error={errors.email}
-                  onBlur={onBlur("email")}
-                />
+                <form onSubmit={onSubmit} noValidate>
+                  <TextField
+                    id="name"
+                    label="Full name"
+                    value={name}
+                    onChange={setName}
+                    error={errors.name}
+                    onBlur={onBlur("name")}
+                  />
 
-                <PasswordField
-                  id="password"
-                  label="Password"
-                  value={password}
-                  onChange={setPassword}
-                  error={errors.password}
-                  onBlur={onBlur("password")}
-                  autoComplete="new-password"
-                />
+                  <EmailField
+                    id="email"
+                    label="Email"
+                    value={email}
+                    onChange={setEmail}
+                    error={errors.email}
+                    onBlur={onBlur("email")}
+                  />
 
-                <TextArea
-                  id="info"
-                  label="Additional info"
-                  value={info}
-                  onChange={setInfo}
-                  error={errors.info}
-                  onBlur={onBlur("info")}
-                />
+                  <PasswordField
+                    id="password"
+                    label="Password"
+                    value={password}
+                    onChange={setPassword}
+                    error={errors.password}
+                    onBlur={onBlur("password")}
+                    autoComplete="new-password"
+                  />
 
-                {role === "mentor" && (
-                  <>
-                    <Typography variant="h6" className="section-title">
-                    </Typography>
+                  <TextArea
+                    id="info"
+                    label="Additional info"
+                    value={info}
+                    onChange={setInfo}
+                    error={errors.info}
+                    onBlur={onBlur("info")}
+                  />
+
+                  {role === "mentor" && (
+                    <>
+                      <Typography variant="h6" className="section-title">
+                        {/* אפשר להוסיף טקסט אם תרצי */}
+                      </Typography>
 
                       <YearsExperienceField
                         id="years"
@@ -203,17 +188,18 @@ export default function SignUp() {
                         error={errors.languages}
                         onBlur={onBlur("languages")}
                       />
-                  </>
-                )}
+                    </>
+                  )}
 
-                <div className="form-actions">
-                  <Button type="submit" variant="contained" fullWidth>
-                    Create account
-                  </Button>
-                </div>
-              </form>
-            </>
-          )}
+                  <div className="form-actions">
+                    <Button type="submit" variant="contained" fullWidth>
+                      Create account
+                    </Button>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
         </Paper>
       </Container>
     </div>
