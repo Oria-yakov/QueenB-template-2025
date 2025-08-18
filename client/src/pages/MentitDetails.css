@@ -1,0 +1,147 @@
+/* Page background */
+.md-page {
+  min-height: 100vh;
+  background: #fdecef;
+  display: grid;
+  place-items: start center;
+  padding: 24px;
+}
+.md-page--center { text-align: center; }
+
+/* Top bar (Back + WhatsApp) */
+.md-topbar {
+  width: min(920px, 100%);
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  justify-content: flex-start; /* Align left */
+}
+
+/* Back & link buttons */
+.md-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid #f4c9d2;
+  border-radius: 10px;
+  background: #ffff;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+  transition: box-shadow .15s ease, transform .06s ease;
+  color: inherit;
+}
+.md-link-btn:hover { box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+.md-link-btn:active { transform: translateY(1px); }
+
+/* WhatsApp button special style */
+.md-btn--whatsapp {
+  border: 1px solid #25d366;
+  background: #25d366;
+  color: #fff !important;
+}
+.md-btn--whatsapp:hover {
+  background: #1ebe5d;
+  box-shadow: 0 3px 12px rgba(37, 211, 102, 0.3);
+}
+.md-btn--whatsapp:active {
+  transform: translateY(1px);
+}
+
+/* Card */
+.md-card {
+  width: min(920px, 100%);
+  border: 2px solid #f6a9b8;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(248, 140, 160, 0.15);
+  overflow: hidden;
+}
+
+/* Hero */
+.md-hero {
+  position: relative;
+  padding: 40px 24px 70px;
+  background: linear-gradient(160deg, #ff997f, #f28fb1 55%, #ffc1d6);
+  color: #fff;
+  clip-path: polygon(0 0,100% 0,100% 72%,0 88%);
+}
+
+/* Logo (top-right) */
+.md-logo {
+  position: absolute;
+  right: 16px;
+  top: 12px;
+  height: 56px;
+  width: auto;
+  transform: scale(1.8);
+  transform-origin: top right;
+}
+
+/* Name and subtitle */
+.md-hero__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin-left: 180px;
+}
+.md-name { margin: 0; font-size: 34px; line-height: 1.2; letter-spacing: .3px; }
+.md-sub  { margin: 0; opacity: .95; }
+
+/* Avatar */
+.md-avatar {
+  position: absolute;
+  left: 24px;
+  top: 12px;
+  width: 148px;
+  height: 148px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  z-index: 1;
+}
+
+/* Body */
+.md-body { padding: 40px 24px 24px; }
+.md-section { margin-top: 16px; }
+.md-title { margin: 0 0 8px; font-size: 18px; color: #333; }
+.md-text  { margin: 0; color: #555; }
+
+/* Contact buttons */
+.md-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.md-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #ffd0dc;
+  background: #fff6f8;
+  text-decoration: none;
+  color: #8a3a52;
+  font-weight: 600;
+  transition: transform .06s ease, box-shadow .15s ease, background .2s ease;
+}
+.md-btn:hover { box-shadow: 0 3px 12px rgba(238,110,140,.25); background: #ffe9f0; }
+.md-btn:active { transform: translateY(1px); }
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .md-hero { padding: 32px 16px 64px; }
+  .md-logo { right: 12px; top: 12px; width: 48px; }
+
+  .md-avatar {
+    left: 16px;
+    top: 10px;
+    width: 128px;
+    height: 128px;
+    border-width: 5px;
+  }
+  .md-hero__text { margin-left: 140px; }
+
+  .md-body { padding: 36px 16px 16px; }
+  .md-name { font-size: 28px; }
+}

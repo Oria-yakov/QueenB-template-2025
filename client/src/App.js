@@ -3,15 +3,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import Entry from "./pages/Entry";
 import SignUp from "./pages/SignUp";
-import Login from "./pages/Login";             
-import MentorsCards from "./pages/MentorsCards"; 
-import MentitsCards from "./pages/MentitsCards"; 
+import Login from "./pages/Login";
+import MentorsCards from "./pages/MentorsCards";
+import MentitsCards from "./pages/MentitsCards";
 import MentorDetails from "./pages/MentorDetails";
-
-
+import MentitDetails from "./pages/MentitDetails"; // ✅ השם תואם בדיוק
 
 const theme = createTheme({ /* ... */ });
-
 
 function App() {
   return (
@@ -26,8 +24,7 @@ function App() {
           <Route path="/mentits" element={<MentitsCards />} />
           <Route path="/Entry" element={<Entry />} />
           <Route path="/mentors/:id" element={<MentorDetails />} />
-
-          
+          <Route path="/mentits/:id" element={<MentitDetails />} /> 
         </Routes>
       </Router>
     </ThemeProvider>
@@ -35,4 +32,3 @@ function App() {
 }
 
 export default App;
-
