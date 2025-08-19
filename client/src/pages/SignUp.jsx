@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Paper, Typography, Button, Box } from "@mui/material";
+import { Container, Paper, Typography, Button, Box, TextField as MuiTextField } from "@mui/material";
 import { useLocation } from "react-router-dom";
 
 import TextField from "../components/form/TextField";
@@ -15,6 +15,9 @@ import "./SignUp.css";
 export default function SignUp() {
   const location = useLocation();
 
+  const submittingRef = React.useRef(false);
+  const fileInputRef = React.useRef(null);
+
   const [role, setRole] = React.useState(null);
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -24,8 +27,15 @@ export default function SignUp() {
   const [years, setYears] = React.useState(0);
   const [languages, setLanguages] = React.useState([]);
 
+  // profile fields
+  const [phone, setPhone] = React.useState("");
+  const [linkedin, setLinkedin] = React.useState("");
+  const [imageUrl, setImageUrl] = React.useState("");
+  const [imageUploading, setImageUploading] = React.useState(false);
+
   const [errors, setErrors] = React.useState({
     name: "", email: "", password: "", info: "", years: "", languages: "",
+    phone: "", linkedin: "",
   });
 
   React.useEffect(() => {
@@ -34,12 +44,40 @@ export default function SignUp() {
     if (r === "mentor" || r === "mentee") setRole(r);
   }, [location.search]);
 
-  const validateName = (v) => !v.trim() ? "Required field" : v.trim().length < 2 ? "Name must be at least 2 characters" : "";
-  const validateEmail = (v) => !v.trim() ? "Required field" : !/[^\s@]+@[^\s@]+\.[^\s@]+/.test(v) ? "Invalid email" : "";
-  const validatePassword = (v) => !v ? "Required field" : v.length < 8 ? "Password must be at least 8 characters" : !/[0-9]/.test(v) ? "Password must include at least one digit" : "";
+  const validateName = (v) =>
+    !v.trim() ? "Required field" :
+    v.trim().length < 2 ? "Name must be at least 2 characters" : "";
+
+  const validateEmail = (v) =>
+    !v.trim() ? "Required field" :
+    !/[^\s@]+@[^\s@]+\.[^\s@]+/.test(v) ? "Invalid email" : "";
+
+  const validatePassword = (v) =>
+    !v ? "Required field" :
+    v.length < 8 ? "Password must be at least 8 characters" :
+    !/[0-9]/.test(v) ? "Password must include at least one digit" : "";
+
   const validateInfo = (v) => (v && v.length > 500 ? "Please keep it under 500 characters" : "");
-  const validateYears = (v) => role === "mentor" ? (v <= 0 ? "Please enter at least 1 year" : v > 60 ? "Please enter a realistic value (≤ 60)" : "") : "";
-  const validateLanguages = (arr) => role === "mentor" ? (arr.length === 0 ? "Select at least one language" : "") : "";
+
+  const validateYears = (v) =>
+    role === "mentor"
+      ? (v <= 0 ? "Please enter at least 1 year" : v > 60 ? "Please enter a realistic value (≤ 60)" : "")
+      : "";
+
+  const validateLanguages = (arr) =>
+    role === "mentor" ? (arr.length === 0 ? "Select at least one language" : "") : "";
+
+  // optional validators
+  const validatePhone = (v) => {
+    if (!v) return "";
+    const digits = v.replace(/\D/g, "");
+    return digits.length < 8 || digits.length > 15 ? "Enter a valid phone number" : "";
+  };
+
+  const validateLinkedin = (v) => {
+    if (!v) return "";
+    return /^https?:\/\/(www\.)?linkedin\.com\/.+/i.test(v) ? "" : "Enter a valid LinkedIn URL";
+  };
 
   const validateAll = () => {
     const next = {
@@ -49,23 +87,52 @@ export default function SignUp() {
       info: validateInfo(info),
       years: validateYears(years),
       languages: validateLanguages(languages),
+      phone: validatePhone(phone),
+      linkedin: validateLinkedin(linkedin),
     };
     setErrors(next);
     return Object.values(next).every((e) => !e);
   };
 
-  const onSubmit = (e) => {
+  async function onSubmit(e) {
     e.preventDefault();
-    if (validateAll()) {
-      const payload = { name, email, password, info, role };
-      if (role === "mentor") {
-        payload.years = years;
-        payload.languages = languages;
+    if (!validateAll()) return;
+
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+
+    const payload = {
+      name,
+      email,
+      password,
+      info,
+      role,
+      ...(role === "mentor" ? { years, languages } : {}),
+      phone: phone || null,
+      linkedin: linkedin || null,
+      imageUrl: imageUrl || null, // URL שחוזר מההעלאה, אם הועלתה תמונה
+    };
+
+    try {
+      const res = await fetch("/api/users/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Signup failed (status ${res.status})`);
       }
-      console.log("SignUp payload:", payload);
-      alert(`Welcome, ${name}! (${role})`);
+      const data = await res.json();
+      console.log("Signed up:", data);
+      alert("Account created!");
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Something went wrong");
+    } finally {
+      submittingRef.current = false;
     }
-  };
+  }
 
   const onBlur = (field) => () => {
     setErrors((prev) => ({
@@ -77,8 +144,35 @@ export default function SignUp() {
         : field === "info" ? validateInfo(info)
         : field === "years" ? validateYears(years)
         : field === "languages" ? validateLanguages(languages)
+        : field === "phone" ? validatePhone(phone)
+        : field === "linkedin" ? validateLinkedin(linkedin)
         : "",
     }));
+  };
+
+  // === image upload (no URL input) ===
+  const openFilePicker = () => fileInputRef.current?.click();
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("image", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Upload failed (${res.status})`);
+      }
+      const out = await res.json(); // { url: "/uploads/xxxx.jpg" }
+      setImageUrl(out.url);
+    } catch (e1) {
+      alert(e1.message || "Upload failed");
+    } finally {
+      setImageUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   };
 
   return (
@@ -86,12 +180,12 @@ export default function SignUp() {
       <Container maxWidth="sm">
         <Paper elevation={2} className="signup-card">
 
-          {/* ====== TOP עם לוגו ====== */}
+          {/* TOP עם לוגו */}
           <div className="signup-top">
             <img src={logo} alt="QueenB Logo" className="signup-logo" />
           </div>
 
-          {/* ====== BOTTOM עם כל התוכן ====== */}
+          {/* BOTTOM */}
           <div className="signup-bottom">
             <Typography variant="h4" gutterBottom>
               Create account
@@ -131,7 +225,7 @@ export default function SignUp() {
                 </Box>
 
                 <form onSubmit={onSubmit} noValidate>
-                  <TextField
+                  <TextField required
                     id="name"
                     label="Full name"
                     value={name}
@@ -140,7 +234,7 @@ export default function SignUp() {
                     onBlur={onBlur("name")}
                   />
 
-                  <EmailField
+                  <EmailField required
                     id="email"
                     label="Email"
                     value={email}
@@ -149,7 +243,7 @@ export default function SignUp() {
                     onBlur={onBlur("email")}
                   />
 
-                  <PasswordField
+                  <PasswordField required
                     id="password"
                     label="Password"
                     value={password}
@@ -170,9 +264,7 @@ export default function SignUp() {
 
                   {role === "mentor" && (
                     <>
-                      <Typography variant="h6" className="section-title">
-                        {/* אפשר להוסיף טקסט אם תרצי */}
-                      </Typography>
+                      <Typography variant="h6" className="section-title"></Typography>
 
                       <YearsExperienceField
                         id="years"
@@ -191,8 +283,70 @@ export default function SignUp() {
                     </>
                   )}
 
+                  {/* === New optional fields for both roles === */}
+                  <MuiTextField
+                    id="phone"
+                    label="Phone (optional)"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    onBlur={onBlur("phone")}
+                    error={!!errors.phone}
+                    helperText={errors.phone}
+                    fullWidth
+                    margin="normal"
+                  />
+
+                  <MuiTextField
+                    id="linkedin"
+                    label="LinkedIn URL (optional)"
+                    value={linkedin}
+                    onChange={(e) => setLinkedin(e.target.value)}
+                    onBlur={onBlur("linkedin")}
+                    error={!!errors.linkedin}
+                    helperText={errors.linkedin}
+                    fullWidth
+                    margin="normal"
+                  />
+
+                  {/* Upload / take photo */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
+                  <div className="upload-actions">
+                    <Button
+                      type="button"
+                      variant="outlined"
+                      onClick={openFilePicker}
+                      disabled={imageUploading}
+                    >
+                      {imageUploading ? "Uploading..." : "Upload  photo"}
+                    </Button>
+                    {imageUrl && (
+                      <Button type="button" variant="text" onClick={() => setImageUrl("")}>
+                        Remove image
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Preview */}
+                  {imageUrl && (
+                    <Box className="upload-preview">
+                      <img
+                        className="preview-img"
+                        src={imageUrl}
+                        alt="Preview"
+                        onError={(e) => { e.currentTarget.style.display = "none"; }}
+                      />
+                    </Box>
+                  )}
+
                   <div className="form-actions">
-                    <Button type="submit" variant="contained" fullWidth>
+                    <Button type="submit" variant="contained" fullWidth disabled={imageUploading}>
                       Create account
                     </Button>
                   </div>

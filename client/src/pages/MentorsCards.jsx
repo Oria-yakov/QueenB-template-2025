@@ -1,26 +1,62 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Card from "../components/form2/Card.jsx";
 import SearchBar from "../components/form2/SearchBar.jsx";
-import { PEOPLE } from "../mentors";
 import "./information.css";
 import { useNavigate } from "react-router-dom";
 
 export default function MentorsCards() {
   const [query, setQuery] = useState("");
-  const navigate = useNavigate(); // ← להזיז לפה (לתוך הקומפוננטה)
+  const [mentors, setMentors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/mentors");
+        if (!res.ok) throw new Error(`Failed to load mentors (${res.status})`);
+        const data = await res.json();
+
+        if (!alive) return;
+        // languages יכולה להגיע כמחרוזת JSON או כ-null
+        const normalized = data.map((m) => {
+          let langs = [];
+          if (m.languages != null) {
+            try {
+              langs = Array.isArray(m.languages)
+                ? m.languages
+                : JSON.parse(m.languages);
+            } catch {
+              langs = [];
+            }
+          }
+          return { ...m, languages: langs };
+        });
+
+        setMentors(normalized);
+      } catch (e) {
+        setErr(e.message || "Load error");
+      } finally {
+        setLoading(false);
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return PEOPLE;
+    if (!q) return mentors;
 
-    return PEOPLE.filter((p) => {
+    return mentors.filter((p) => {
       const langs = Array.isArray(p.languages) ? p.languages.join(" ") : (p.languages || "");
       return (
-        p.name.toLowerCase().includes(q) ||
-        langs.toLowerCase().includes(q)
+        (p.name || "").toLowerCase().includes(q) ||
+        (langs || "").toLowerCase().includes(q)
       );
     });
-  }, [query]);
+  }, [query, mentors]);
 
   const handleMore = (person) => () => {
     navigate(`/mentors/${person.id}`);
@@ -29,6 +65,13 @@ export default function MentorsCards() {
   const handleSearchSubmit = () => {
     if (filtered.length > 0) handleMore(filtered[0])();
   };
+
+  if (loading) {
+    return <main className="page" dir="rtl" style={{ padding: 24 }}>Loading mentors…</main>;
+  }
+  if (err) {
+    return <main className="page" dir="rtl" style={{ padding: 24, color: "crimson" }}>{err}</main>;
+  }
 
   return (
     <main className="page" dir="rtl">
@@ -54,7 +97,7 @@ export default function MentorsCards() {
           {filtered.map((p) => (
             <Card
               key={p.id}
-              imageSrc={p.imageSrc}
+              imageSrc={p.imageSrc || "/placeholder-avatar.png"}  // fallback אם אין תמונה
               name={p.name}
               title={Array.isArray(p.languages) ? p.languages.join(", ") : p.languages}
               onMore={handleMore(p)}

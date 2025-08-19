@@ -8,13 +8,13 @@
 }
 .md-page--center { text-align: center; }
 
-/* Top bar (Back + WhatsApp) */
+/* Top bar (Back only) */
 .md-topbar {
   width: min(920px, 100%);
   display: flex;
   gap: 10px;
   margin-bottom: 16px;
-  justify-content: flex-start; /* Align left */
+  justify-content: flex-start;
 }
 
 /* Back & link buttons */
@@ -34,20 +34,6 @@
 }
 .md-link-btn:hover { box-shadow: 0 2px 10px rgba(0,0,0,.06); }
 .md-link-btn:active { transform: translateY(1px); }
-
-/* WhatsApp button special style */
-.md-btn--whatsapp {
-  border: 1px solid #25d366;
-  background: #25d366;
-  color: #fff !important;
-}
-.md-btn--whatsapp:hover {
-  background: #1ebe5d;
-  box-shadow: 0 3px 12px rgba(37, 211, 102, 0.3);
-}
-.md-btn--whatsapp:active {
-  transform: translateY(1px);
-}
 
 /* Card */
 .md-card {
@@ -113,16 +99,10 @@
 /* Contact buttons */
 .md-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
 .md-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid #ffd0dc;
-  background: #fff6f8;
-  text-decoration: none;
-  color: #8a3a52;
-  font-weight: 600;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 14px; border-radius: 12px;
+  border: 1px solid #ffd0dc; background: #fff6f8;
+  text-decoration: none; color: #8a3a52; font-weight: 600;
   transition: transform .06s ease, box-shadow .15s ease, background .2s ease;
 }
 .md-btn:hover { box-shadow: 0 3px 12px rgba(238,110,140,.25); background: #ffe9f0; }
