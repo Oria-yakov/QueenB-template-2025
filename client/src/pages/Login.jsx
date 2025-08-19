@@ -11,6 +11,11 @@ export default function Login() {
   const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
 
+  // ⬅️ כפתור Back שולח תמיד ל־Entry.jsx
+  function handleBack() {
+    navigate("/", { replace: true });
+  }
+
   const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -30,17 +35,11 @@ export default function Login() {
 
       const data = await res.json();
 
-      // הצגת הודעה לפני הניווט (כדי לא לחסום את הניווט)
-      alert(`Welcome back, ${data.name} (${data.role})`);
-
       if (data.role === "mentor") {
-        // מנטורית → דף המנטיות
         navigate("/mentits");
       } else if (data.role === "mentee") {
-        // מנטית → דף המנטוריות
         navigate("/mentors");
       } else {
-        // fallback
         navigate("/");
       }
     } catch (err) {
@@ -53,6 +52,11 @@ export default function Login() {
 
   return (
     <div className="login-root">
+      {/* כפתור BACK בצד שמאל של המסך */}
+      <Button className="login-back-global" onClick={handleBack}>
+        ← Back
+      </Button>
+
       <Container maxWidth="sm">
         <Paper elevation={2} className="login-card">
           {/* TOP עם לוגו */}

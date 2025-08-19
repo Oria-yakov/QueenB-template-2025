@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "../components/form2/Card.jsx";
 import SearchBar from "../components/form2/SearchBar.jsx";
+import HeaderBar from "../components/form2/HeaderBar.jsx"; // ✅ סרגל עליון
 import "./information.css";
 
 export default function MentitsCards() {
@@ -39,7 +40,8 @@ export default function MentitsCards() {
     );
   }, [query, mentees]);
 
-  const handleMore = (person) => () => navigate(`/mentits/${person.id}`);
+  const handleMore = (person) => () =>
+  navigate(`/mentits/${person.id}`, { state: { person } });
   const handleSearchSubmit = () => { if (filtered.length > 0) handleMore(filtered[0])(); };
 
   if (loading) return <main className="page" dir="rtl" style={{ padding: 24 }}>Loading mentees…</main>;
@@ -47,12 +49,19 @@ export default function MentitsCards() {
 
   return (
     <main className="page" dir="rtl">
-      <SearchBar
-        value={query}
-        onChange={setQuery}
-        onSubmit={handleSearchSubmit}
-        placeholder="Search by name or technology "
-      />
+      {/* ✅ סרגל עליון */}
+      <HeaderBar />
+      <div className="header-gap" />
+
+      {/* ✅ שורת חיפוש ממורכזת */}
+      <div className="search-wrap">
+        <SearchBar
+          value={query}
+          onChange={setQuery}
+          onSubmit={handleSearchSubmit}
+          placeholder="Search by name or technology"
+        />
+      </div>
 
       {filtered.length === 0 ? (
         <div style={{ textAlign: "center", opacity: 0.75 }}>

@@ -5,6 +5,36 @@
   place-items: center;
   padding: 20px;
   background: linear-gradient(180deg, #fff1f2 0%, #fdeaf1 40%, #f8fafc 100%);
+  position: relative; /* מאפשר absolute positioning */
+}
+
+/* ====== BACK BUTTON (גלובלי) ====== */
+.login-back-global {
+  position: absolute !important;
+  left: 24px;
+  top: 24px;
+  padding: 6px 16px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: #ec4899 !important;               /* ורוד עידן */
+  background: #fff !important;             /* רקע לבן */
+  border: 2px solid #f9a8d4 !important;    /* מסגרת ורודה */
+  border-radius: 999px !important;
+  text-transform: none !important;
+  box-shadow: 0 2px 6px rgba(236, 72, 153, 0.15);
+  transition: background .2s ease, transform .15s ease, box-shadow .15s ease;
+  z-index: 10;
+}
+
+.login-back-global:hover {
+  background: #fdf2f8 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(236, 72, 153, 0.25);
+}
+
+.login-back-global:active {
+  background: #fce7f3 !important;
+  transform: translateY(0);
 }
 
 /* ====== CARD ====== */
@@ -51,13 +81,6 @@
   color: #111827;
 }
 
-.login-bottom .subtitle {
-  margin: 0 0 16px;
-  color: rgba(17, 24, 39, 0.75);
-  line-height: 1.45;
-  font-size: 14.5px;
-}
-
 /* ====== INPUTS ====== */
 .MuiFormControl-root {
   margin-top: 8px;
@@ -82,14 +105,14 @@
   box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
 }
 
-/* ====== ACTIONS (כפתור) ====== */
+/* ====== ACTIONS (כפתור התחברות) ====== */
 .form-actions {
   margin-top: 18px;
 }
 
 .login-bottom .MuiButton-contained {
   height: 48px;
-  border-radius: 999px;                  /* pill shape */
+  border-radius: 999px;
   background: #111827;
   color: #ffffff;
   font-weight: 700;

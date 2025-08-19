@@ -1,0 +1,29 @@
+.header-bar {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  height: 60px;              /* 🔹 גובה קבוע לסרגל */
+  padding: 0 20px;
+  background: linear-gradient(180deg, #fff1f2 0%, #f4dae4 40%, #f8fafc 100%);
+  border-bottom: 1px solid #ddd;
+}
+
+.logout-btn {
+  background: #eaa8b9; 
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease-in-out;
+}
+
+.logout-btn:hover {
+  background: #d88a9d;       /* 🔹 צבע טיפה כהה בהובר */
+}
+
+.header-logo {
+  height: 95px;        /* 🔹 תשני כאן את הערך כדי להגדיל/להקטין */
+  object-fit: contain;
+}

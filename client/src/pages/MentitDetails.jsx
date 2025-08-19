@@ -1,4 +1,3 @@
-// src/pages/MentitDetails.jsx
 import React from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import "./MentitDetails.css";
@@ -49,6 +48,14 @@ export default function MentitDetails() {
   if (err) {
     return (
       <main className="md-page md-page--center" dir="ltr">
+        <button
+          onClick={() => navigate(-1)}
+          className="md-back-global"
+          aria-label="Go back"
+        >
+          ← Back
+        </button>
+
         <h2 style={{ color: "crimson" }}>{err}</h2>
         <Link to="/mentits" className="md-link-btn md-link-btn--back">
           ← Back to list
@@ -60,6 +67,14 @@ export default function MentitDetails() {
   if (!person) {
     return (
       <main className="md-page md-page--center" dir="ltr">
+        <button
+          onClick={() => navigate(-1)}
+          className="md-back-global"
+          aria-label="Go back"
+        >
+          ← Back
+        </button>
+
         <h2>Mentit not found (id: {id})</h2>
         <Link to="/mentits" className="md-link-btn md-link-btn--back">
           ← Back to list
@@ -74,16 +89,14 @@ export default function MentitDetails() {
 
   return (
     <main className="md-page" dir="ltr">
-      {/* Topbar – רק חזרה */}
-      <div className="md-topbar">
-        <button
-          onClick={() => navigate(-1)}
-          className="md-link-btn md-link-btn--back"
-          aria-label="Go back"
-        >
-          ← Back
-        </button>
-      </div>
+      {/* Back button גלובלי – שמאל עליון של המסך */}
+      <button
+        onClick={() => navigate(-1)}
+        className="md-back-global"
+        aria-label="Go back"
+      >
+        ← Back
+      </button>
 
       <section className="md-card" aria-label={`Details for ${person.name}`}>
         <div className="md-hero">

@@ -3,12 +3,42 @@
   min-height: 100vh;
   background: #fdecef;
   display: grid;
-  place-items: start center;
+  place-items: center;   /* מרכז אנכי ואופקי */
   padding: 24px;
+  position: relative;    /* לשמור עבור כפתור ה-Back */
 }
+
+
 .md-page--center { text-align: center; }
 
-/* Top bar (Back only) */
+/* Back button גלובלי – מחוץ לכרטיס, שמאל-עליון */
+.md-back-global {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  padding: 6px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #ec4899;               /* ורוד עידן */
+  background: #fff;             /* לבן */
+  border: 2px solid #f9a8d4;    /* מסגרת ורודה */
+  border-radius: 999px;         /* עגלול מלא */
+  text-transform: none;
+  box-shadow: 0 2px 6px rgba(236, 72, 153, 0.15);
+  transition: background .2s ease, transform .15s ease, box-shadow .15s ease;
+  z-index: 10;
+}
+.md-back-global:hover {
+  background: #fdf2f8;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(236, 72, 153, 0.25);
+}
+.md-back-global:active {
+  background: #fce7f3;
+  transform: translateY(0);
+}
+
+/* Top bar (Back only) — לא בשימוש יותר, אפשר למחוק אם תרצי */
 .md-topbar {
   width: min(920px, 100%);
   display: flex;
@@ -17,7 +47,7 @@
   justify-content: flex-start;
 }
 
-/* Back & link buttons */
+/* Back & link buttons (לכפתורי קישורים אחרים) */
 .md-link-btn {
   display: inline-flex;
   align-items: center;
@@ -65,63 +95,3 @@
   transform-origin: top right;
 }
 
-/* Name and subtitle */
-.md-hero__text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  margin-left: 180px;
-}
-.md-name { margin: 0; font-size: 34px; line-height: 1.2; letter-spacing: .3px; }
-.md-sub  { margin: 0; opacity: .95; }
-
-/* Avatar */
-.md-avatar {
-  position: absolute;
-  left: 24px;
-  top: 12px;
-  width: 148px;
-  height: 148px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  box-shadow: 0 8px 20px rgba(0,0,0,.15);
-  z-index: 1;
-}
-
-/* Body */
-.md-body { padding: 40px 24px 24px; }
-.md-section { margin-top: 16px; }
-.md-title { margin: 0 0 8px; font-size: 18px; color: #333; }
-.md-text  { margin: 0; color: #555; }
-
-/* Contact buttons */
-.md-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
-.md-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 10px 14px; border-radius: 12px;
-  border: 1px solid #ffd0dc; background: #fff6f8;
-  text-decoration: none; color: #8a3a52; font-weight: 600;
-  transition: transform .06s ease, box-shadow .15s ease, background .2s ease;
-}
-.md-btn:hover { box-shadow: 0 3px 12px rgba(238,110,140,.25); background: #ffe9f0; }
-.md-btn:active { transform: translateY(1px); }
-
-/* Mobile responsiveness */
-@media (max-width: 640px) {
-  .md-hero { padding: 32px 16px 64px; }
-  .md-logo { right: 12px; top: 12px; width: 48px; }
-
-  .md-avatar {
-    left: 16px;
-    top: 10px;
-    width: 128px;
-    height: 128px;
-    border-width: 5px;
-  }
-  .md-hero__text { margin-left: 140px; }
-
-  .md-body { padding: 36px 16px 16px; }
-  .md-name { font-size: 28px; }
-}

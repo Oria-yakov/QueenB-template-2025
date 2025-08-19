@@ -1,6 +1,5 @@
-// src/pages/MentorDetails.jsx
 import React from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import "./MentorDetails.css";
 import logo from "./queenb-logo.png";
 import { FaWhatsapp, FaLinkedin } from "react-icons/fa";
@@ -15,42 +14,51 @@ function formatWhatsApp(phone) {
 export default function MentorDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { state } = useLocation(); // ✅ אם הגיע מידע מהכרטיס, נקבל אותו פה
 
-  const [person, setPerson] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
+  const [person, setPerson] = React.useState(state?.person || null);
+  const [loading, setLoading] = React.useState(!state?.person);
   const [err, setErr] = React.useState("");
 
   React.useEffect(() => {
     let alive = true;
-    (async () => {
-      try {
-        const res = await fetch(`/api/mentors/${id}`);
-        if (!res.ok) throw new Error(`Failed to load mentor (${res.status})`);
-        const data = await res.json();
 
-        // normalize languages: array or []
-        let languages = [];
-        if (data.languages != null) {
-          try {
-            languages = Array.isArray(data.languages)
-              ? data.languages
-              : JSON.parse(data.languages);
-          } catch {
-            languages = [];
+    // ✅ אם לא הגיע מידע ב־state, נביא מהשרת
+    if (!person) {
+      (async () => {
+        try {
+          setLoading(true);
+          const res = await fetch(`/api/mentors/${id}`);
+          if (!res.ok) throw new Error(`Failed to load mentor (${res.status})`);
+          const data = await res.json();
+
+          let languages = [];
+          if (data.languages != null) {
+            try {
+              languages = Array.isArray(data.languages)
+                ? data.languages
+                : JSON.parse(data.languages);
+            } catch {
+              languages = [];
+            }
           }
+
+          const normalized = { ...data, languages };
+          if (alive) setPerson(normalized);
+        } catch (e) {
+          if (alive) setErr(e.message || "Load error");
+        } finally {
+          if (alive) setLoading(false);
         }
+      })();
+    }
 
-        const normalized = { ...data, languages };
-        if (alive) setPerson(normalized);
-      } catch (e) {
-        if (alive) setErr(e.message || "Load error");
-      } finally {
-        if (alive) setLoading(false);
-      }
-    })();
-    return () => { alive = false; };
-  }, [id]);
+    return () => {
+      alive = false;
+    };
+  }, [id, person]); // ✅ הוספתי person כדי לסגור את האזהרה של ESLint
 
+  // 🔹 מצבי טעינה/שגיאה
   if (loading) {
     return (
       <main className="md-page md-page--center" dir="ltr">
@@ -63,7 +71,9 @@ export default function MentorDetails() {
     return (
       <main className="md-page md-page--center" dir="ltr">
         <h2 style={{ color: "crimson" }}>{err}</h2>
-        <Link to="/mentors" className="md-link-btn">Back to list</Link>
+        <Link to="/mentors" className="back-btn">
+          Back to list
+        </Link>
       </main>
     );
   }
@@ -72,29 +82,33 @@ export default function MentorDetails() {
     return (
       <main className="md-page md-page--center" dir="ltr">
         <h2>Mentor not found</h2>
-        <Link to="/mentors" className="md-link-btn">Back to list</Link>
+        <Link to="/mentors" className="back-btn">
+          Back to list
+        </Link>
       </main>
     );
   }
 
+  // 🔹 הכנות ל־UI
   const langs = Array.isArray(person.languages)
     ? person.languages.join(", ")
-    : (person.languages || person.title || "");
+    : person.languages || person.title || "";
 
-  // מהשרת כרגע יש לנו תמיד email, אולי אין phone/linkedin/imageSrc – נציג רק מה שקיים
-  const waHref   = person.phone ? `https://wa.me/${formatWhatsApp(person.phone)}` : null;
-  const telHref  = person.phone ? `tel:${person.phone}` : null;
+  const waHref = person.phone
+    ? `https://wa.me/${formatWhatsApp(person.phone)}`
+    : null;
+  const telHref = person.phone ? `tel:${person.phone}` : null;
   const mailHref = person.email ? `mailto:${person.email}` : null;
 
   return (
     <main className="md-page" dir="ltr">
-      <button onClick={() => navigate(-1)} className="md-link-btn md-link-btn--back">
+      {/* ✅ כפתור Back צף בפינה */}
+      <button onClick={() => navigate(-1)} className="back-btn">
         ← Back
       </button>
 
       <section className="md-card">
         <div className="md-hero">
-          {/* Company logo (top-right) */}
           <img src={logo} alt="Company Logo" className="md-logo" />
 
           <div className="md-hero__text">
@@ -131,22 +145,32 @@ export default function MentorDetails() {
               <h2 className="md-title">Contact</h2>
               <div className="md-actions">
                 {mailHref && (
-                  <a className="md-btn" href={mailHref} aria-label="Send email">
+                  <a className="md-btn" href={mailHref}>
                     ✉️ Email
                   </a>
                 )}
                 {waHref && (
-                  <a className="md-btn" href={waHref} target="_blank" rel="noreferrer" aria-label="WhatsApp">
+                  <a
+                    className="md-btn"
+                    href={waHref}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <FaWhatsapp size={18} /> WhatsApp
                   </a>
                 )}
                 {telHref && (
-                  <a className="md-btn" href={telHref} aria-label="Phone">
+                  <a className="md-btn" href={telHref}>
                     📞 Phone
                   </a>
                 )}
                 {person.linkedin && (
-                  <a className="md-btn" href={person.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                  <a
+                    className="md-btn"
+                    href={person.linkedin}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <FaLinkedin size={18} /> LinkedIn
                   </a>
                 )}
