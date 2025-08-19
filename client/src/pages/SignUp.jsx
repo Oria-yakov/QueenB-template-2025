@@ -1,6 +1,11 @@
 import React from "react";
-import { Container, Paper, Typography, Button, Box, TextField as MuiTextField } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import {
+  Container, Paper, Typography, Button, Box, TextField as MuiTextField,
+  Dialog, DialogTitle, DialogContent, DialogActions, Chip
+} from "@mui/material";
+import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew"; // ⬅️ אייקון חזרה
+import { useLocation, useNavigate } from "react-router-dom";
 
 import TextField from "../components/form/TextField";
 import EmailField from "../components/form/EmailField";
@@ -14,6 +19,7 @@ import "./SignUp.css";
 
 export default function SignUp() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const submittingRef = React.useRef(false);
   const fileInputRef = React.useRef(null);
@@ -37,6 +43,22 @@ export default function SignUp() {
     name: "", email: "", password: "", info: "", years: "", languages: "",
     phone: "", linkedin: "",
   });
+
+  // Success dialog
+  const [successOpen, setSuccessOpen] = React.useState(false);
+  const handleSuccessClose = () => {
+    setSuccessOpen(false);
+    navigate("/login");
+  };
+  const handleDialogClose = (_e, reason) => {
+    if (reason === "backdropClick" || reason === "escapeKeyDown") return;
+    handleSuccessClose();
+  };
+
+  // ⬅️ כפתור Back שולח תמיד לעמוד Entry.jsx ("/")
+  function handleBack() {
+    navigate("/", { replace: true });
+  }
 
   React.useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -67,7 +89,6 @@ export default function SignUp() {
   const validateLanguages = (arr) =>
     role === "mentor" ? (arr.length === 0 ? "Select at least one language" : "") : "";
 
-  // optional validators
   const validatePhone = (v) => {
     if (!v) return "";
     const digits = v.replace(/\D/g, "");
@@ -97,7 +118,6 @@ export default function SignUp() {
   async function onSubmit(e) {
     e.preventDefault();
     if (!validateAll()) return;
-
     if (submittingRef.current) return;
     submittingRef.current = true;
 
@@ -110,7 +130,7 @@ export default function SignUp() {
       ...(role === "mentor" ? { years, languages } : {}),
       phone: phone || null,
       linkedin: linkedin || null,
-      imageUrl: imageUrl || null, // URL שחוזר מההעלאה, אם הועלתה תמונה
+      imageUrl: imageUrl || null,
     };
 
     try {
@@ -125,7 +145,7 @@ export default function SignUp() {
       }
       const data = await res.json();
       console.log("Signed up:", data);
-      alert("Account created!");
+      setSuccessOpen(true);
     } catch (err) {
       console.error(err);
       alert(err.message || "Something went wrong");
@@ -150,7 +170,6 @@ export default function SignUp() {
     }));
   };
 
-  // === image upload (no URL input) ===
   const openFilePicker = () => fileInputRef.current?.click();
 
   const handleFileChange = async (e) => {
@@ -177,21 +196,37 @@ export default function SignUp() {
 
   return (
     <div className="signup-root">
+      {/* ⬅️ כפתור Back קבוע */}
+      <Button className="signup-back-global" onClick={handleBack} startIcon={<ArrowBackIosNewIcon />}>
+        Back
+      </Button>
+
       <Container maxWidth="sm">
         <Paper elevation={2} className="signup-card">
-
-          {/* TOP עם לוגו */}
           <div className="signup-top">
             <img src={logo} alt="QueenB Logo" className="signup-logo" />
           </div>
 
-          {/* BOTTOM */}
           <div className="signup-bottom">
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
               Create account
             </Typography>
 
-            {/* choose mentor or mentee */}
+            {/* Pink role chip */}
+            {role && (
+              <Chip
+                label={role === "mentor" ? "Signing up as Mentor" : "Signing up as Mentee"}
+                sx={{
+                  mb: 2,
+                  fontWeight: 600,
+                  borderRadius: 999,
+                  px: 1.5,
+                  bgcolor: role === "mentor" ? "#ad1457" : "#f8bbd0",
+                  color: role === "mentor" ? "#fff" : "#880e4f",
+                }}
+              />
+            )}
+
             {role === null && (
               <Box className="role-gate">
                 <Typography className="role-gate-title" variant="h6">
@@ -283,10 +318,9 @@ export default function SignUp() {
                     </>
                   )}
 
-                  {/* === New optional fields for both roles === */}
                   <MuiTextField
                     id="phone"
-                    label="Phone (optional)"
+                    label="Phone "
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     onBlur={onBlur("phone")}
@@ -298,7 +332,7 @@ export default function SignUp() {
 
                   <MuiTextField
                     id="linkedin"
-                    label="LinkedIn URL (optional)"
+                    label="LinkedIn URL "
                     value={linkedin}
                     onChange={(e) => setLinkedin(e.target.value)}
                     onBlur={onBlur("linkedin")}
@@ -308,7 +342,6 @@ export default function SignUp() {
                     margin="normal"
                   />
 
-                  {/* Upload / take photo */}
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -333,7 +366,6 @@ export default function SignUp() {
                     )}
                   </div>
 
-                  {/* Preview */}
                   {imageUrl && (
                     <Box className="upload-preview">
                       <img
@@ -356,6 +388,73 @@ export default function SignUp() {
           </div>
         </Paper>
       </Container>
+
+      {/* Success Dialog */}
+      <Dialog
+        open={successOpen}
+        onClose={handleDialogClose}
+        aria-labelledby="signup-success-title"
+        PaperProps={{
+          sx: {
+            borderRadius: 4,
+            p: 2,
+            maxWidth: 420,
+          },
+          elevation: 3,
+        }}
+        slotProps={{ backdrop: { sx: { backdropFilter: "blur(2px)" } } }}
+      >
+        <DialogTitle
+          id="signup-success-title"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1.5,
+            fontWeight: 700,
+            justifyContent: "center",
+            textAlign: "center",
+            pb: 0,
+            color: "#ad1457",
+          }}
+        >
+          <CheckCircleOutlineOutlinedIcon sx={{ fontSize: 28, color: "#d81b60" }} />
+          Account created
+        </DialogTitle>
+
+        <DialogContent
+          sx={{
+            textAlign: "center",
+            pt: 1.5,
+            "& p": { mt: 0.5, color: "text.secondary" }
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            You’re all set! 🎉
+          </Typography>
+          <Typography variant="body1">
+            Your account was created successfully. You can now log in to continue.
+          </Typography>
+        </DialogContent>
+
+        <DialogActions sx={{ justifyContent: "center", pt: 1, pb: 2 }}>
+          <Button
+            onClick={handleSuccessClose}
+            variant="contained"
+            sx={{
+              px: 3,
+              py: 1,
+              borderRadius: 999,
+              textTransform: "none",
+              fontWeight: 600,
+              bgcolor: "#d81b60",
+              "&:hover": { bgcolor: "#ad1457" },
+            }}
+            autoFocus
+          >
+            Go to Login
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

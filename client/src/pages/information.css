@@ -10,13 +10,44 @@ body {
 .page {
   min-height: 100vh;
   padding: 24px;
-    background: linear-gradient(180deg, #fff1f2 0%, #fdeaf1 40%, #f8fafc 100%);
+  background: linear-gradient(180deg, #fff1f2 0%, #fdeaf1 40%, #f8fafc 100%);
 }
 
-/* הגריד שמסדר את כל הכרטיסים */
+/* רווח מתחת להדר */
+.header-gap { height: 28px; }
+
+/* עוטף של שורת החיפוש – מרכז ומגביל רוחב */
+.search-wrap {
+  max-width: 760px;
+  margin: 0 auto 24px;
+  padding: 0 16px;
+}
+
+/* גריד כרטיסיות: כמה שנכנס באותה שורה */
 .cards-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;  /* מרכז אופקי */
-  gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 300px)); /* גודל קבוע עד 300px */
+  gap: 20px;
+
+  justify-content: center;   /* מרכז את הטורים */
+  justify-items: center;     /* מרכז כל כרטיס */
+  width: 100%;
+  max-width: 1080px;          /* מספיק ל-3–4 כרטיסים */
+  margin: 0 auto;
+  padding: 8px 0 40px;        /* הורדתי padding צדדי כדי שלא ישבור שורה */
+
+  direction: ltr;             /* מנטרל RTL בפריסה */
+}
+
+/* שומרים RTL לטקסטים בכרטיסים */
+.cards-grid > * { direction: rtl; }
+
+/* מובייל: טור אחד */
+@media (max-width: 700px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    max-width: 520px;
+    gap: 16px;
+  }
 }
