@@ -1,32 +1,49 @@
-import React, { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";              // ← הוספה
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Card from "../components/form2/Card.jsx";
 import SearchBar from "../components/form2/SearchBar.jsx";
-import { MENTITS } from "../mentits";
 import "./information.css";
 
-export default function MentorsCards() {
+export default function MentitsCards() {
   const [query, setQuery] = useState("");
-  const navigate = useNavigate();                            // ← הוספה
+  const [mentees, setMentees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/mentees");
+        if (!res.ok) throw new Error(`Failed to load mentees (${res.status})`);
+        const data = await res.json();
+        if (!alive) return;
+        setMentees(data);
+      } catch (e) {
+        setErr(e.message || "Load error");
+      } finally {
+        setLoading(false);
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return MENTITS;
-    return MENTITS.filter((p) =>
-      p.name.toLowerCase().includes(q) ||
-      (p.title || "").toLowerCase().includes(q)
+    if (!q) return mentees;
+    return mentees.filter((p) =>
+      (p.name || "").toLowerCase().includes(q) ||
+      (p.email || "").toLowerCase().includes(q) ||
+      (p.additional_info || "").toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, mentees]);
 
-  const handleMore = (person) => () => {
-    navigate(`/mentits/${person.id}`);                       // ← ניווט במקום alert
-  };
+  const handleMore = (person) => () => navigate(`/mentits/${person.id}`);
+  const handleSearchSubmit = () => { if (filtered.length > 0) handleMore(filtered[0])(); };
 
-  const handleSearchSubmit = () => {
-    if (filtered.length > 0) {
-      navigate(`/mentits/${filtered[0].id}`);                // ← גם פה ניווט ישיר
-    }
-  };
+  if (loading) return <main className="page" dir="rtl" style={{ padding: 24 }}>Loading mentees…</main>;
+  if (err) return <main className="page" dir="rtl" style={{ padding: 24, color: "crimson" }}>{err}</main>;
 
   return (
     <main className="page" dir="rtl">
@@ -34,7 +51,7 @@ export default function MentorsCards() {
         value={query}
         onChange={setQuery}
         onSubmit={handleSearchSubmit}
-        placeholder="Search by name or technology"
+        placeholder="Search by name or technology "
       />
 
       {filtered.length === 0 ? (
@@ -52,10 +69,10 @@ export default function MentorsCards() {
           {filtered.map((p) => (
             <Card
               key={p.id}
-              imageSrc={p.imageSrc}
+              imageSrc={p.imageSrc || "/placeholder-avatar.png"}
               name={p.name}
-              title={p.title}
-              onMore={handleMore(p)}                           // ← יפעיל navigate
+              title={p.additional_info || ""}   // למנטיות מציגים מידע נוסף
+              onMore={handleMore(p)}
             />
           ))}
         </section>

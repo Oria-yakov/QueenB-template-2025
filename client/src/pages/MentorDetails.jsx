@@ -1,7 +1,6 @@
 // src/pages/MentorDetails.jsx
 import React from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { PEOPLE } from "../mentors";
 import "./MentorDetails.css";
 import logo from "./queenb-logo.png";
 import { FaWhatsapp, FaLinkedin } from "react-icons/fa";
@@ -17,7 +16,58 @@ export default function MentorDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const person = PEOPLE.find((p) => String(p.id) === String(id));
+  const [person, setPerson] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [err, setErr] = React.useState("");
+
+  React.useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch(`/api/mentors/${id}`);
+        if (!res.ok) throw new Error(`Failed to load mentor (${res.status})`);
+        const data = await res.json();
+
+        // normalize languages: array or []
+        let languages = [];
+        if (data.languages != null) {
+          try {
+            languages = Array.isArray(data.languages)
+              ? data.languages
+              : JSON.parse(data.languages);
+          } catch {
+            languages = [];
+          }
+        }
+
+        const normalized = { ...data, languages };
+        if (alive) setPerson(normalized);
+      } catch (e) {
+        if (alive) setErr(e.message || "Load error");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => { alive = false; };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <main className="md-page md-page--center" dir="ltr">
+        <h2>Loading…</h2>
+      </main>
+    );
+  }
+
+  if (err) {
+    return (
+      <main className="md-page md-page--center" dir="ltr">
+        <h2 style={{ color: "crimson" }}>{err}</h2>
+        <Link to="/mentors" className="md-link-btn">Back to list</Link>
+      </main>
+    );
+  }
+
   if (!person) {
     return (
       <main className="md-page md-page--center" dir="ltr">
@@ -31,9 +81,10 @@ export default function MentorDetails() {
     ? person.languages.join(", ")
     : (person.languages || person.title || "");
 
-  const waHref  = person.phone ? `https://wa.me/${formatWhatsApp(person.phone)}` : null;
-  const telHref = person.phone ? `tel:${person.phone}` : null;
-  const mailHref= person.email ? `mailto:${person.email}` : null;
+  // מהשרת כרגע יש לנו תמיד email, אולי אין phone/linkedin/imageSrc – נציג רק מה שקיים
+  const waHref   = person.phone ? `https://wa.me/${formatWhatsApp(person.phone)}` : null;
+  const telHref  = person.phone ? `tel:${person.phone}` : null;
+  const mailHref = person.email ? `mailto:${person.email}` : null;
 
   return (
     <main className="md-page" dir="ltr">
@@ -51,29 +102,27 @@ export default function MentorDetails() {
             {langs && <p className="md-sub">{langs}</p>}
           </div>
 
-          {person.imageSrc && (
-            <img
-              className="md-avatar"
-              src={person.imageSrc}
-              alt={person.name}
-              width={148}
-              height={148}
-            />
-          )}
+          <img
+            className="md-avatar"
+            src={person.imageSrc || "/placeholder-avatar.png"}
+            alt={person.name}
+            width={148}
+            height={148}
+          />
         </div>
 
         <div className="md-body">
-          {person.additionalInfo && (
+          {person.additional_info && (
             <div className="md-section">
               <h2 className="md-title">About</h2>
-              <p className="md-text">{person.additionalInfo}</p>
+              <p className="md-text">{person.additional_info}</p>
             </div>
           )}
 
-          {person.yearsExperience != null && (
+          {person.years_exp != null && (
             <div className="md-section">
               <h2 className="md-title">Years of experience</h2>
-              <p className="md-text">{person.yearsExperience}</p>
+              <p className="md-text">{person.years_exp}</p>
             </div>
           )}
 

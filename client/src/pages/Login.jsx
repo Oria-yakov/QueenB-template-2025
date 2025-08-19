@@ -2,15 +2,53 @@ import React from "react";
 import { Container, Paper, Typography, TextField, Button } from "@mui/material";
 import "./Login.css";
 import logo from "./queenb-logo.png";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigate();
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login payload:", { email, password });
-    alert(`Logging in as: ${email}`);
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `Login failed (status ${res.status})`);
+      }
+
+      const data = await res.json();
+
+      // הצגת הודעה לפני הניווט (כדי לא לחסום את הניווט)
+      alert(`Welcome back, ${data.name} (${data.role})`);
+
+      if (data.role === "mentor") {
+        // מנטורית → דף המנטיות
+        navigate("/mentits");
+      } else if (data.role === "mentee") {
+        // מנטית → דף המנטוריות
+        navigate("/mentors");
+      } else {
+        // fallback
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("❌ Login error:", err);
+      setError(err.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -22,7 +60,7 @@ export default function Login() {
             <img src={logo} alt="QueenB Logo" className="login-logo" />
           </div>
 
-          {/* BOTTOM עם הכותרת והטופס */}
+          {/* BOTTOM */}
           <div className="login-bottom">
             <Typography variant="h4" gutterBottom>
               Log in
@@ -49,9 +87,15 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
               />
 
+              {error && (
+                <Typography color="error" variant="body2">
+                  {error}
+                </Typography>
+              )}
+
               <div className="form-actions">
-                <Button type="submit" variant="contained" fullWidth>
-                  Log in
+                <Button type="submit" variant="contained" fullWidth disabled={loading}>
+                  {loading ? "Logging in..." : "Log in"}
                 </Button>
               </div>
             </form>

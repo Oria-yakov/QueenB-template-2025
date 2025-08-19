@@ -12,7 +12,7 @@
   width: 100%;
   max-width: 520px;
   background: #ffffff;
-  border-radius: 24px;           /* פינות מעוגלות */
+  border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 14px 36px rgba(17, 24, 39, 0.12);
   padding: 0;
@@ -56,22 +56,17 @@
 }
 
 /* ====== Gate state (לפני בחירת תפקיד) ====== */
-.role-gate {
-  text-align: center;
-  margin-top: 8px;
-  margin-bottom: 12px;
-}
+.role-gate { text-align: center; margin-top: 8px; margin-bottom: 12px; }
 .role-gate-title { margin-bottom: 8px; }
 .role-gate-hint  { margin-top: 8px; color: #6b7280; font-size: 14px; }
 
 /* ====== מתג בחירת תפקיד ====== */
 .role-switch {
   display: flex;
-  justify-content: center;      /* מרכז את הכפתורים */
-  gap: 16px;                    /* ריווח ביניהם */
+  justify-content: center;
+  gap: 16px;
   margin: 16px 0 20px;
 }
-
 /* שני הכפתורים שחורים + pill (גם contained וגם outlined) */
 .role-switch .MuiButton-root {
   background: #111827 !important;
@@ -97,15 +92,10 @@
   border-radius: 12px;
   transition: box-shadow .15s ease, transform .08s ease;
 }
-.signup-bottom .MuiOutlinedInput-notchedOutline {
-  border-color: rgba(17, 24, 39, 0.08);
-}
-.signup-bottom .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-  border-color: rgba(17, 24, 39, 0.18);
-}
+.signup-bottom .MuiOutlinedInput-notchedOutline { border-color: rgba(17, 24, 39, 0.08); }
+.signup-bottom .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline { border-color: rgba(17, 24, 39, 0.18); }
 .signup-bottom .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: #111827;
-  box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+  border-color: #111827; box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
 }
 
 /* ====== Slider ====== */
@@ -130,6 +120,45 @@
 }
 .signup-bottom .MuiButton-contained:hover { transform: translateY(-1px); }
 .signup-bottom .MuiButton-contained:active { transform: translateY(0); opacity: .95; }
+
+/* ====== Upload block (אחידות לכפתורי ההעלאה/מחיקה) ====== */
+.upload-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.upload-actions .MuiButton-outlined {
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid rgba(17, 24, 39, 0.18);
+  border-radius: 12px;
+  height: 42px;
+  padding: 0 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 0 6px 14px rgba(17, 24, 39, 0.12);
+  transition: transform .12s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.upload-actions .MuiButton-outlined:hover {
+  transform: translateY(-1px);
+  border-color: rgba(17, 24, 39, 0.35);
+}
+.upload-actions .MuiButton-text {
+  color: #111827;
+  font-weight: 600;
+  padding: 0 10px;
+  height: 42px;
+}
+
+/* תצוגה מקדימה לתמונה */
+.upload-preview { margin-top: 6px; text-align: center; }
+.preview-img {
+  max-width: 220px;
+  border-radius: 12px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  box-shadow: 0 10px 22px rgba(17, 24, 39, 0.18);
+}
 
 /* ====== RESPONSIVE ====== */
 @media (max-width: 480px) {

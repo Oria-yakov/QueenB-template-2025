@@ -1,6 +1,6 @@
+// src/pages/MentitDetails.jsx
 import React from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { MENTITS } from "../mentits";
 import "./MentitDetails.css";
 import logo from "./queenb-logo.png";
 import { FaWhatsapp, FaLinkedin } from "react-icons/fa";
@@ -16,33 +16,65 @@ export default function MentitDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const person = MENTITS.find((p) => String(p.id) === String(id));
+  const [person, setPerson] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [err, setErr] = React.useState("");
 
-  if (!person) {
+  React.useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch(`/api/mentees/${id}`);
+        if (!res.ok) throw new Error(`Failed to load mentee (${res.status})`);
+        const data = await res.json();
+        if (!alive) return;
+        setPerson(data);
+      } catch (e) {
+        if (alive) setErr(e.message || "Load error");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => { alive = false; };
+  }, [id]);
+
+  if (loading) {
     return (
       <main className="md-page md-page--center" dir="ltr">
-        <div className="md-card" style={{ padding: 24 }}>
-          <h2 className="md-title">Mentit not found (id: {id})</h2>
-          <div style={{ marginTop: 12 }}>
-            <Link to="/mentits" className="md-link-btn md-link-btn--back">
-              ← Back to list
-            </Link>
-          </div>
-        </div>
+        <h2>Loading…</h2>
       </main>
     );
   }
 
-  const langs = Array.isArray(person.languages)
-    ? person.languages.join(", ")
-    : person.languages || person.title || "";
+  if (err) {
+    return (
+      <main className="md-page md-page--center" dir="ltr">
+        <h2 style={{ color: "crimson" }}>{err}</h2>
+        <Link to="/mentits" className="md-link-btn md-link-btn--back">
+          ← Back to list
+        </Link>
+      </main>
+    );
+  }
 
-  const waHref = person.phone ? `https://wa.me/${formatWhatsApp(person.phone)}` : null;
-  const telHref = person.phone ? `tel:${person.phone}` : null;
+  if (!person) {
+    return (
+      <main className="md-page md-page--center" dir="ltr">
+        <h2>Mentit not found (id: {id})</h2>
+        <Link to="/mentits" className="md-link-btn md-link-btn--back">
+          ← Back to list
+        </Link>
+      </main>
+    );
+  }
+
+  const waHref   = person.phone ? `https://wa.me/${formatWhatsApp(person.phone)}` : null;
+  const telHref  = person.phone ? `tel:${person.phone}` : null;
   const mailHref = person.email ? `mailto:${person.email}` : null;
 
   return (
     <main className="md-page" dir="ltr">
+      {/* Topbar – רק חזרה */}
       <div className="md-topbar">
         <button
           onClick={() => navigate(-1)}
@@ -51,52 +83,32 @@ export default function MentitDetails() {
         >
           ← Back
         </button>
-
-        {waHref && (
-          <a
-            href={waHref}
-            target="_blank"
-            rel="noreferrer"
-            className="md-link-btn md-btn--whatsapp"
-          >
-            <FaWhatsapp size={18} /> WhatsApp
-          </a>
-        )}
       </div>
 
-      {/* removed role="region" to avoid jsx-a11y/no-redundant-roles */}
       <section className="md-card" aria-label={`Details for ${person.name}`}>
         <div className="md-hero">
           {logo && <img src={logo} alt="Queens Match" className="md-logo" />}
 
-          {person.imageSrc && (
-            <img
-              className="md-avatar"
-              src={person.imageSrc}
-              alt={person.name}
-              width={148}
-              height={148}
-            />
-          )}
+          <img
+            className="md-avatar"
+            src={person.imageSrc || "/placeholder-avatar.png"}
+            alt={person.name}
+            width={148}
+            height={148}
+          />
 
           <div className="md-hero__text">
             <h1 className="md-name">{person.name}</h1>
-            {langs && <p className="md-sub">{langs}</p>}
+            {person.email && <p className="md-sub">mentor</p>}
+            {person.email && <p className="md-sub"></p>}
           </div>
         </div>
 
         <div className="md-body">
-          {person.additionalInfo && (
+          {person.additional_info && (
             <section className="md-section">
               <h2 className="md-title">About</h2>
-              <p className="md-text">{person.additionalInfo}</p>
-            </section>
-          )}
-
-          {person.yearsExperience != null && (
-            <section className="md-section">
-              <h2 className="md-title">Years of experience</h2>
-              <p className="md-text">{person.yearsExperience}</p>
+              <p className="md-text">{person.additional_info}</p>
             </section>
           )}
 
@@ -111,7 +123,7 @@ export default function MentitDetails() {
                 )}
                 {waHref && (
                   <a
-                    className="md-btn md-btn--whatsapp"
+                    className="md-btn"
                     href={waHref}
                     target="_blank"
                     rel="noreferrer"
